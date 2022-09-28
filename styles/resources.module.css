@@ -1,10 +1,24 @@
+.navigation {
+  background-color: rgb(249, 218, 208);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  column-gap: 2.5rem;
+  padding-top: 2rem;
+}
+.navigation > button {
+  color: rgb(78, 97, 55);
+  font-size: 1.5rem;
+  font-weight: 700;
+  padding: 8px 0;
+  background: none;
+  cursor: pointer;
+  border: none;
+  line-height: 1.8;
+}
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 40px 56px;
-}
-.img {
-  width: 300px;
-  height: 230px;
-  border-radius: .5rem;
+  margin: 56px 56px;
 }
