@@ -1,22 +1,22 @@
-import { forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import styles from './articles.module.css';
 
-const Articles = forwardRef(({state, setLast}, ref) => {
+function Articles({ state, setLast }, ref) {
   return state.map((item, index) => {
-    if (state.length-1 === index) {
-      return (
-        <div key={item._id} ref={setLast} className={styles.card}>
-          <img src={item.thumb} alt={item.title} className={styles.img} />
-            <h4 className={styles.title}>{item.title}</h4>
-        </div>
-      )
-    }
+    if (state.length - 1 === index) {
     return (
-      <div key={item._id} className={styles.card}>
+      <div key={item._id} ref={setLast} className={styles.card}>
         <img src={item.thumb} alt={item.title} className={styles.img} />
         <h4 className={styles.title}>{item.title}</h4>
-      </div>);
-  })
-});
-export default Articles;
+      </div>
+    );
+  }
+  return (
+    <div key={item._id} className={styles.card}>
+      <img src={item.thumb} alt={item.title} className={styles.img} />
+      <h4 className={styles.title}>{item.title}</h4>
+    </div>
+  );
+})}
 
+export default forwardRef(Articles);
