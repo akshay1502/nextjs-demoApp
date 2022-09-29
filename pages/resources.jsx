@@ -9,25 +9,48 @@ const LIMIT = 9;
 const articlesURL = `https://api.theinnerhour.com/v1/blogposts?`;
 const videosURL = "https://api.theinnerhour.com/v1/ihvideoslist?";
 const assessmentsURL = "https://api.theinnerhour.com/v1/assessmentslisting?";
+let url = articlesURL;
+let page = 1;
 
 export default function Resources() {
   const [state, setState] = useState([]);
   const [last, setLast] = useState(null);
-  const [page, setPage] = useState(1);
   const [current, setCurrent] = useState('Articles');
   const observer = useRef();
+  const callBack = (entries) => {
+    const first = entries[0];
+    if (first.isIntersecting) {
+      fetchNewResources(url);
+    }
+  }
+  const fetchNewResources = async (url) => {
+    const searchParams = new URLSearchParams({
+      page: page,
+      limit: LIMIT
+    });
+    const fetchResult = await fetch(url + searchParams);
+    const data = await fetchResult.json();
+    setState((prev)=> [...new Set([...prev, ...data.list])]);
+    page+=1;
+  }
+  const handleNavigation = (e, urlToSet) => {
+    setState([]);
+    page = 1;
+    const dataValue = e.target.dataset.value
+    setCurrent(dataValue)
+    url = urlToSet
+    fetchNewResources(url);
+    const navigationBtns = document.querySelectorAll("#navigation > button");
+    navigationBtns.forEach(btn => btn.style.borderBottom = 'none');
+    const btn = document.querySelector(`[data-value=${dataValue}`);
+    btn.style.borderBottom = '4px solid rgb(78, 97, 55)';
+  }
   useEffect(() => {
     (async() => {
-      await fetchNewResources(articlesURL);
+      await fetchNewResources(url);
     })();
     
-    observer.current = new IntersectionObserver((entries) => {
-      const first = entries[0];
-      if (first.isIntersecting) {
-        console.log(state.length);
-        fetchNewResources(articlesURL);
-      }
-    })
+    observer.current = new IntersectionObserver(callBack)
   },[]);
   useEffect(() => {
     const currentObserver = observer.current;
@@ -41,28 +64,6 @@ export default function Resources() {
     }
   }, [last]);
   //  not able to access the latest state values
-  const fetchNewResources = async (url) => {
-    const searchParams = new URLSearchParams({
-      page: page,
-      limit: LIMIT
-    });
-    const fetchResult = await fetch(url + searchParams);
-    const data = await fetchResult.json();
-    console.log(data.list);
-    setState((prev)=> [...new Set([...prev, ...data.list])]);
-    setPage((prev) => prev + 1);
-  }
-  const handleNavigation = (e, url) => {
-    setState([]);
-    setPage(1);
-    const dataValue = e.target.dataset.value
-    setCurrent(dataValue)
-    fetchNewResources(url);
-    const navigationBtns = document.querySelectorAll("#navigation > button");
-    navigationBtns.forEach(btn => btn.style.borderBottom = 'none');
-    const btn = document.querySelector(`[data-value=${dataValue}`);
-    btn.style.borderBottom = '4px solid rgb(78, 97, 55)';
-  }
   return(
     <div>
       <Head>
@@ -88,6 +89,7 @@ export default function Resources() {
                 : <Assessments state={state} /> }
         </div>
       </div>
+      <footer className={styles.footer}>If you didn't find what you were looking for, please reach out to us at support@amahahealth.com  or +912071171501. We're here for you - for anything you might need.</footer>
     </div>
   )
 }

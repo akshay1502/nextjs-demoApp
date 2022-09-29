@@ -22,3 +22,9 @@
   gap: 40px 56px;
   margin: 56px 56px;
 }
+.footer {
+  background-color: darkgreen;
+  text-align: center;
+  color: white;
+  padding: 2rem;
+}
